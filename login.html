@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#181818" />
+    <link rel="icon" href="assets/icons/crest.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/responsive.css" />
+    <script src="assets/icons/lucide.min.js" defer></script>
+    <title>Sign in · Mackie Player Hub</title>
+  </head>
+  <body class="login-page">
+    <main class="login-layout">
+      <section class="login-brand">
+        <div class="brand">
+          <img src="assets/icons/crest.svg" alt="Mackie logo placeholder" />
+          <div>MACKIE RUGBY<small>PLAYER HUB</small></div>
+        </div>
+        <div>
+          <span class="eyebrow">ONE CLUB. ONE STANDARD.</span>
+          <h1>Your team.<br />Your training.<br /><em>Your next level.</em></h1>
+          <p>
+            The home of senior rugby performance.<br />Prepare with purpose.
+            Perform together.
+          </p>
+        </div>
+        <small>Senior squads · Stonehaven, Scotland</small>
+      </section>
+      <section class="login-panel">
+        <span class="eyebrow">WELCOME TO THE HUB</span>
+        <h2>Ready to put the work in?</h2>
+        <p class="muted">Sign in to your senior-team account.</p>
+        <form id="login-form">
+          <label
+            >Email address<input
+              type="email"
+              name="email"
+              autocomplete="email"
+              required
+              placeholder="you@example.com" /></label
+          ><label
+            >Password<input
+              type="password"
+              name="password"
+              autocomplete="current-password"
+              required
+              minlength="8"
+              placeholder="Your password" /></label
+          ><label id="name-field" hidden
+            >Full name<input
+              name="display_name"
+              autocomplete="name"
+              maxlength="100"
+          /></label>
+          <p id="auth-message" role="status"></p>
+          <button type="submit" class="button primary" id="auth-submit">
+            Sign in <i data-lucide="arrow-right"></i>
+          </button>
+        </form>
+        <div class="login-actions">
+          <button class="text-button" id="toggle-register">
+            Request membership</button
+          ><button class="text-button" id="reset-password">
+            Forgot password?
+          </button>
+        </div>
+        <div class="demo-callout">
+          <i data-lucide="flask-conical"></i>
+          <div>
+            <strong>Take a look around</strong>
+            <p>Explore a clearly labelled demo. No account needed.</p>
+            <button class="button secondary" id="demo-button">
+              Explore the demo <i data-lucide="arrow-up-right"></i>
+            </button>
+          </div>
+        </div>
+        <p class="fine-print">
+          Access is restricted to approved senior-team members. New accounts
+          require administrator approval.
+        </p>
+      </section>
+    </main>
+    <div id="toast" class="toast" role="status" hidden></div>
+    <script type="module" src="js/login.js"></script>
+  </body>
+</html>
