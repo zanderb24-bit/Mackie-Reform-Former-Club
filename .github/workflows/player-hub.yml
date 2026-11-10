@@ -19,7 +19,7 @@ permissions:
 jobs:
   test-and-build:
     name: Test and build static site
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -36,10 +36,12 @@ jobs:
         run: npm test
       - name: Build deployable HTML site
         run: npm run build
-      - name: Install test browser
-        run: npx playwright install --with-deps chromium
-      - name: Select installed Chromium
-        run: node --input-type=module -e 'import { chromium } from "@playwright/test"; import { appendFileSync } from "node:fs"; appendFileSync(process.env.GITHUB_ENV, `CHROMIUM_PATH=${chromium.executablePath()}\n`);'
+      - name: Select runner Chrome
+        shell: bash
+        run: |
+          chrome_path="$(command -v google-chrome)"
+          "$chrome_path" --version
+          printf 'CHROMIUM_PATH=%s\n' "$chrome_path" >> "$GITHUB_ENV"
       - name: Test the built site in Chromium
         run: npm run test:browser -- --reporter=list,html
         env:
@@ -72,7 +74,7 @@ jobs:
     name: Launch on GitHub Pages
     if: github.event_name == 'workflow_dispatch' && inputs.deploy && github.ref == 'refs/heads/main'
     needs: test-and-build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     permissions:
       pages: write
