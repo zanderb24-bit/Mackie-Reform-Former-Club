@@ -1,6 +1,6 @@
 # Mackie Rugby Player Hub
 
-A responsive senior-team performance hub built with HTML, CSS and modular vanilla JavaScript. GitHub Pages hosts the files; Supabase provides email/password authentication, PostgreSQL, RLS and private image storage. There is no application backend and no production build step.
+A responsive senior-team performance hub built with HTML, CSS and modular vanilla JavaScript. GitHub Pages hosts the files; Supabase provides email/password authentication, PostgreSQL, RLS and private image storage. There is no application backend or framework compilation step; GitHub Actions packages the static files for deployment.
 
 ## Run it
 
@@ -81,15 +81,32 @@ Data mutations are saved immediately to Supabase, with errors surfaced before re
 - Removing/replacing an attachment or deleting a post removes its board reference; uploaded files are retained in private Storage. Administrators must remove orphaned images in the Supabase Storage dashboard as part of retention housekeeping. An interrupted upload/save can also leave an orphan. Signed image URLs already issued can remain usable for up to five minutes after access revocation.
 - Attendance and training data are personal information. Club operators should agree a retention policy, restrict staff roles, enable appropriate Supabase backups and review access before inviting members. Account deletion can be restricted by authored-record foreign keys; archive/anonymise or reassign authored club content with a trusted operator before deleting an author.
 
-## GitHub Pages deployment — no build
+## Launch from the GitHub Actions tab
 
-1. Commit the static files and migrations to the repository. Do not commit credentials or `node_modules`.
-2. Configure `js/config.js` with the public Supabase settings.
-3. In GitHub **Settings → Pages**, choose **Deploy from a branch**, `main`, `/ (root)`, then save. `.nojekyll` preserves the static files as supplied. Publishing/pushing is an explicit operator action; this project generation does not push or enable Pages.
-4. Use the Pages URL reported by GitHub. All local asset links are relative so the repository subpath works. Update Supabase Site URL and redirect allowlist to that exact `login.html` URL.
-5. Test with administrator, coach, player and pending accounts on separate devices. Confirm email delivery/recovery, approved login, cross-device schedule changes, workout privacy and a real Storage image upload. Keep HTTPS enabled.
+The repository includes **Test, build and launch Player Hub**, a manually runnable workflow in `.github/workflows/player-hub.yml`.
 
-The runtime needs only the static files; npm and Python are not required in production. Fonts and Lucide icons are vendored under `assets`, so the UI makes no font/CDN requests. Replace `assets/icons/crest.svg` with the official club logo when supplied; the current crest is a clearly identified placeholder.
+1. One time only: open GitHub **Settings → Pages → Build and deployment**, set **Source** to **GitHub Actions**. GitHub Pages must be available for the repository/account. If an environment approval is configured for `github-pages`, its reviewer must approve deployment.
+2. Open **Actions → Test, build and launch Player Hub → Run workflow**.
+3. Select **main**. Leave **Launch the tested site on GitHub Pages** checked, then select **Run workflow**. Uncheck it to test and build without deploying.
+4. The workflow installs locked dependencies, runs PostgreSQL/RLS and utility tests, packages the static HTML in `_site`, and runs Chromium tests against that exact packaged site. Deployment starts only if these steps pass. A failed test stops deployment and leaves the existing website in place.
+5. When **Launch on GitHub Pages** succeeds, open the **Player Hub is live** link in the job summary or the `github-pages` deployment URL. It will normally be `https://zanderb24-bit.github.io/Mackie-Reform-Former-Club/`. Use **Explore the demo** until you configure Supabase.
+
+Pushes and pull requests targeting `main` also test and build automatically; they do not deploy. Manual deployments are restricted to `main`. Every successful build includes a downloadable **mackie-player-hub-site** artifact in the workflow run. Browser reports are retained for seven days, and site downloads for fourteen days. The artifact contains only HTML, CSS, browser JavaScript and assets; database migrations, tests and npm dependencies are excluded.
+
+GitHub Actions uses its built-in `GITHUB_TOKEN` with scoped Pages/OIDC permissions. No personal access token or Supabase secret is needed for demo deployments. This does not create or migrate a Supabase project. If the workflow reports that Pages is missing or not enabled, check the one-time Pages setting above and the account's Pages availability.
+
+### Connect the deployed site to club data
+
+Configure the public settings in `js/config.js` using the Supabase instructions above, commit and push the change, then run the workflow again. Update Supabase's Site URL and redirect allowlist to the published `login.html` URL. Keep HTTPS enabled. Verify real email delivery, password recovery, approval, image uploads, cross-device changes and private workout history with separate accounts before club rollout.
+
+### Local static package
+
+```sh
+npm run build
+python3 -m http.server 8000 --directory _site
+```
+
+The packaging command copies the existing static files; there is no JavaScript transpilation or runtime backend. GitHub Pages serves HTML directly. All links remain relative to support the repository subpath. Fonts and Lucide icons are vendored under `assets`; the site makes no font/CDN requests. Replace the placeholder `assets/icons/crest.svg` when the official logo is supplied. Opening the app with `file://` is still unsupported because browser ES modules require HTTP(S).
 
 ## Development and validation
 
